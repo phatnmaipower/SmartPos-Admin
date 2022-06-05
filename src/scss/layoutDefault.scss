@@ -1,0 +1,19 @@
+$header-height:  50px;
+$sidebar-width: 260px;
+$min-screen-width: 1500px;
+$min-screen-height: 950px;
+$main-contain-min-width: calc($min-screen-width - $sidebar-width);
+
+/* z-index - zi */
+$zi-sidebar: 0;
+$zi-main-content: $zi-sidebar + 1;
+$zi-header: $zi-main-content;
+$zi-edit-admin-modal-outer: $zi-header + 1;
+$zi-edit-admin-modal: $zi-edit-admin-modal-outer + 1;
+
+$admins_table_height: 60vh;
+$admin-modal-edit-height: 240px;
+$admin-modal-edit-width: 460px;
+$admin-modal-edit-header-height: 50px;
+$zi-modal-edit-cover: $zi-edit-admin-modal-outer;
+$zi-modal-edit-content: $zi-modal-edit-cover + 1;

@@ -1,0 +1,7 @@
+<svg id="icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  <g id="Ellipse_1" data-name="Ellipse 1" fill="#527ac2" stroke="rgba(0,0,0,0.05)" stroke-width="1">
+    <circle cx="15" cy="15" r="15" stroke="none"/>
+    <circle cx="15" cy="15" r="14.5" fill="none"/>
+  </g>
+  <text id="村春" transform="translate(5 7)" fill="#fff" font-size="10" font-family="YuGothicUI-Regular, Yu Gothic UI"><tspan x="0" y="11">村春</tspan></text>
+</svg>

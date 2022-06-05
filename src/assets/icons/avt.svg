@@ -1,0 +1,18 @@
+<svg id="notif_list_data" xmlns="http://www.w3.org/2000/svg" width="282" height="50" viewBox="0 0 282 50">
+    <rect id="Rectangle_2160" data-name="Rectangle 2160" width="282" height="50" fill="#fff" />
+    <rect id="Rectangle_2161" data-name="Rectangle 2161" width="282" height="1" transform="translate(0 49)" fill="#ddd" />
+    <text id="村上_春樹" data-name="村上 春樹" transform="translate(50 16)" fill="#222" font-size="12" font-family="YuGothicUI-Regular, Yu Gothic UI">
+        <tspan x="0" y="13">村上</tspan>
+        <tspan y="13" font-family="SegoeUI, Segoe UI"></tspan>
+        <tspan y="13">春樹</tspan>
+    </text>
+    <g id="icon" transform="translate(10 10)">
+        <g id="Ellipse_1" data-name="Ellipse 1" fill="#527ac2" stroke="rgba(0,0,0,0.05)" stroke-width="1">
+            <circle cx="15" cy="15" r="15" stroke="none" />
+            <circle cx="15" cy="15" r="14.5" fill="none" />
+        </g>
+        <text id="村春" transform="translate(5 7)" fill="#fff" font-size="10" font-family="YuGothicUI-Regular, Yu Gothic UI">
+            <tspan x="0" y="11">村春</tspan>
+        </text>
+    </g>
+</svg>

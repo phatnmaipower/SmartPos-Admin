@@ -54,16 +54,22 @@ const emitEventCloseBaseModal = () => {
     $header-height: 50px;
     z-index: $zi-modal-edit-content;
     position: relative;
+    $x: 15px;
+    $y: 15px;
     > .modal-header {
       height: $admin-modal-edit-header-height;
+      border-bottom: 1px solid #ddd;
       > .title {
         font-size: 12px;
         color: #222;
+        position: absolute;
+        left: $x;
+        top: $y;
       }
       > .close {
         position: absolute;
-        right: 15px;
-        top: 15px;
+        right: $x;
+        top: $y;
       }
     }
 

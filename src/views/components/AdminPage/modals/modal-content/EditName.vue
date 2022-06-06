@@ -1,45 +1,123 @@
 <template>
   <div class="edit-name-content-div">
     <form
-      action="/admin/update/name"
+      action="http://localhost:3000/admins/updateOne/name"
       method="post"
       enctype="multipart/form-data"
+      @submit.prevent="updateName"
     >
       <label>お名前</label><br />
 
       <input
         type="text"
-        v-model="form.firstName"
+        v-model="firstName"
         id="firstName"
         name="firstName"
+        :class="{ invalid: !form.isFirstNameValid }"
+        @input="onInput('firstName')"
       />
+      <span class="validation-msg">{{ errMsgFirstName }}</span>
       <input
         type="text"
-        v-model="form.lastName"
+        v-model="lastName"
         id="lastName"
         name="lastName"
+        :class="{ invalid: !form.isLastNameValid }"
+        @input="onInput('lastName')"
       />
-
+      <span class="validation-msg">{{ errMsgLastName }}</span>
       <button type="submit" id="btn-submit-edit-name">確認する</button>
     </form>
   </div>
 </template>
 <script lang="ts" setup>
 import Admin from "@/models/AdminPage/Admin";
-import { reactive, defineProps } from "vue";
+import { AxiosStatic } from "axios";
+import { reactive, defineProps, inject, defineEmits } from "vue";
+import UpdateEventDetail from "../type/UpdateEventDetail";
+import * as yup from "yup";
+import { setLocale } from "yup";
+import * as ja from "yup-locale-ja";
+import { useField, useForm } from "vee-validate";
 
+setLocale(ja.suggestive);
 interface PropI {
   admin: Admin;
 }
 
 const props = defineProps<PropI>();
 
+const emit = defineEmits<{
+  (e: "update", detail: UpdateEventDetail): void;
+}>();
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const axios: AxiosStatic | undefined = inject<AxiosStatic>("axios"); // inject axios
+
 const form = reactive({
-  firstName: "",
-  lastName: "",
+  isFirstNameValid: true,
+  isLastNameValid: true,
 });
-form.firstName = props?.admin?.name.split(" ")[0] ?? "";
-form.lastName = props?.admin?.name.split(" ")[1] ?? "";
+
+const simpleSchema = yup.object({
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+});
+
+const useFormObj = useForm({
+  validationSchema: simpleSchema,
+});
+
+let { value: firstName, errorMessage: errMsgFirstName } =
+  useField<string>("firstName");
+let { value: lastName, errorMessage: errMsgLastName } =
+  useField<string>("lastName");
+
+function onInput(type: string): void {
+  if (type == "firstName") {
+    Promise.resolve(useFormObj.validateField("firstName"))
+      .then(({ valid }) => {
+        form.isFirstNameValid = valid;
+      })
+      .catch((e: Error) => {
+        console.log("err" + e.message);
+      });
+  } else if (type == "lastName") {
+    Promise.resolve(useFormObj.validateField("lastName"))
+      .then(({ valid }) => {
+        form.isLastNameValid = valid;
+      })
+      .catch((e: Error) => {
+        console.log("err" + e.message);
+      });
+  }
+}
+
+firstName.value = props?.admin?.name.split(" ")[0] ?? "";
+lastName.value = props?.admin?.name.split(" ")[1] ?? "";
+
+const updateName = async () => {
+  const formData = new FormData();
+  formData.append("id", props.admin.id);
+  formData.append("name", `${firstName.value} ${lastName.value}`);
+
+  let response = await axios?.post(
+    "http://localhost:3000/admins/updateOne/name",
+    formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    }
+  );
+  console.log(response);
+
+  if (response?.status == 200) {
+    emit("update", {
+      statusText: response.statusText,
+      status: response.status,
+      data: response.data.data,
+    });
+  }
+};
 </script>
 <style lang="scss" scoped>
 @import "@/scss/layoutDefault.scss";
@@ -63,22 +141,48 @@ form.lastName = props?.admin?.name.split(" ")[1] ?? "";
     > input {
       width: 50%;
       height: 40px;
-      width: 195px;
+      position: absolute;
+      top: 30px;
+      width: 200px;
+      border-radius: 4px;
+      border: 0;
+      padding: 7px 15px;
+      border: 1px solid #ccc;
+      background: transparent;
+      &:focus {
+        outline: none;
+        background: #fafafa;
+      }
+      &.invalid {
+        border-color: #f00 !important;
+        box-shadow: 0 0 0 4px rgba(216, 0, 12, 0.2) !important;
+      }
+
       &#firstName {
-        margin-right: 5px;
+        left: 0;
       }
       &#lastName {
-        margin-left: 5px;
+        right: 0;
       }
     }
-
+    .validation-msg {
+      color: red;
+      float: left;
+      font-size: 10px;
+      position: absolute;
+      top: 70px;
+    }
     > button {
       width: 100%;
       height: 40px;
       width: 150px;
       display: block;
       margin: 0 auto;
-      margin-top: 35px;
+      margin-top: 70px;
+      background-color: #35cfaa;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
     }
   }
 }

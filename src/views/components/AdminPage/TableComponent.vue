@@ -2,7 +2,9 @@
 <template>
   <div ref="tableExistingContainer">
     <search-bar v-if="props.tableType === 'inviting'"></search-bar>
+
     <div v-else style="height: 70px"></div>
+
     <div class="fixTableHead">
       <vue-table-lite
         :is-static-mode="true"
@@ -17,31 +19,34 @@
         @is-finished="tableLoadingFinish"
       >
       </vue-table-lite>
+
       <table-component-menu-modal
         v-if="menuModal.isShowing && props.tableType === 'existing'"
-        :admin="menuModal.selectedAdmin"
+        :admin="menuModal.adminSelected"
         :is-showing="menuModal.isShowing"
         :right="menuModal.right"
         :top="menuModal.top"
-        @close-modal="closeMenuModal"
+        @close-modal="menuModal.close"
         :menu-content="menuModalExistingContent[props.tableType]"
         @on-select="menuModal.onSelect"
       ></table-component-menu-modal>
+
       <table-component-menu-modal
         v-else-if="menuModal.isShowing && props.tableType === 'inviting'"
-        :admin="menuModal.selectedAdmin"
+        :admin="menuModal.adminSelected"
         :is-showing="menuModal.isShowing"
         :right="menuModal.right"
         :top="menuModal.top"
-        @close-modal="closeMenuModal"
+        @close-modal="menuModal.open"
         :menu-content="menuModalExistingContent[props.tableType]"
         :on-select="menuModal.onSelect"
       ></table-component-menu-modal>
+
       <div
         v-if="menuModal.isShowing"
         id="model-outer"
         v-show="menuModal.isShowing"
-        @click="closeMenuModal"
+        @click="menuModal.close"
       ></div>
     </div>
   </div>
@@ -52,9 +57,11 @@
     :admin="(editModal.adminSelected as Admin)"
     @close-base-modal="editModal.close"
   >
-    <edit-name-vue :admin="editModal.adminSelected as Admin"></edit-name-vue>
+    <edit-name-vue
+      :admin="editModal.adminSelected as Admin"
+      @update="adminUpdate"
+    ></edit-name-vue>
   </base-modal>
-  <button @click="editModal.open">open modal</button>
 </template>
 
 <script lang="ts" setup>
@@ -98,12 +105,20 @@ const menuModal = reactive({
   isShowing: false,
   right: 0,
   top: 0,
-  selectedAdmin: null as Admin | null,
+  adminSelected: null as Admin | null,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSelect: (event: any) => {
     editModal.open();
     editModal.adminSelected = event.admin;
     console.log(event.admin);
+    menuModal.isShowing = false;
+  },
+
+  open: () => {
+    menuModal.isShowing = true;
+  },
+
+  close: () => {
     menuModal.isShowing = false;
   },
 });
@@ -124,7 +139,7 @@ const editModal = reactive({
 
   data: {
     [editModalType.editName]: {
-      title: "edit name",
+      title: "お名前編集",
       component: shallowRef(
         () =>
           import(
@@ -173,7 +188,7 @@ const table = reactive({
         let html =
           /*html */
           `<div class="row-name">
-            <img src="${row.img}" alt="AVT">
+            <img src="${row.img}" alt="AVT" style="height: 30px; width: 30px">
             <span> ${row.name}</span>
           </div>`;
         return html;
@@ -266,13 +281,6 @@ const table = reactive({
 const axios: any = inject("axios"); // inject axios
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getAdmins = (api: string): any => {
-  table.isLoading = true;
-
-  return axios.get(api);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let admins: any = ref([]);
 
 const index = {
@@ -350,12 +358,15 @@ const updatePaginationDisplay = () => {
   }
 };
 
-onMounted(() => {
-  Promise.resolve(getAdmins(props.api)).then(
+const getAdmins = async () => {
+  console.log("getAdmins");
+  return Promise.resolve(axios.get(props.api)).then(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async (response: { data: any }) => {
+    (response: { data: any }) => {
+      admins.value = [];
       admins.value.push(...response.data);
       admins.value.sort();
+
       table.totalRecordCount = admins.value.length;
       table.sortable.order = "ID";
       table.sortable.sort = "asc";
@@ -363,111 +374,118 @@ onMounted(() => {
       table.rows = admins.value;
       totalPage.value = Math.floor(table.rows.length / table.pageSize + 1);
       //customize pagination below
-      nextTick().then(() => {
-        //add 2 3-dot icons
-        const li1 = document.createElement("li");
-        li1.classList.add(
-          "vtl-paging-pagination-page-li",
-          "vtl-paging-pagination-page-li-number",
-          "three-dot",
-          "three-dot-left"
-        );
-        li1.innerHTML = /*html*/ `<img src="img/icons/3dot-black.svg" alt="•••">`;
-
-        const li2 = document.createElement("li");
-        li2.classList.add(
-          "vtl-paging-pagination-page-li",
-          "vtl-paging-pagination-page-li-number",
-          "three-dot",
-          "three-dot-right"
-        );
-        li2.innerHTML = /*html*/ `<img src="img/icons/3dot-black.svg" alt="•••">`;
-        tableExistingContainer.value
-          .querySelector(".vtl-paging-pagination-ul")
-          .appendChild(li1);
-        tableExistingContainer.value
-          .querySelector(".vtl-paging-pagination-ul")
-          .appendChild(li2);
-
-        // set html content for prev and next btn
-        getListPagination()[index.PREV].querySelector(
-          ".vtl-paging-pagination-page-link"
-        ).innerHTML = /*html*/ `<img src="img/icons/prev.svg" alt="•••">`;
-        getListPagination()[index.NEXT].querySelector(
-          ".vtl-paging-pagination-page-link"
-        ).innerHTML = /*html*/ `<img src="img/icons/next.svg" alt="•••">`;
-
-        // set html content for first and last btn
-        getListPagination()[index.FIRST].querySelector(
-          ".vtl-paging-pagination-page-link"
-        ).innerHTML = /*html*/ `1`;
-        getListPagination()[index.LAST].querySelector(
-          ".vtl-paging-pagination-page-link"
-        ).innerHTML = /*html*/ `${Math.floor(
-          table.rows.length / table.pageSize + 1
-        )}`;
-
-        updatePaginationDisplay();
-
-        nextTick().then(() => {
-          let list = getListPagination();
-
-          // add event to all btn to update curr page state
-          // console.log("len = " + list.length);
-
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const pageChangeCB = (e: any) => {
-            console.log("BTN click: " + e.target);
-
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const handle = (dom: any) => {
-              if (
-                dom.classList.contains("vtl-paging-pagination-page-link-prev")
-              ) {
-                // console.log("prev");
-
-                if (curPage.value !== 1) {
-                  let temp: number = curPage.value;
-                  temp--;
-                  curPage.value = temp;
-                } else {
-                  curPage.value = 1;
-                }
-              } else if (
-                dom.classList.contains("vtl-paging-pagination-page-link-next")
-              ) {
-                // console.log("next");
-
-                if (curPage.value !== totalPage.value) {
-                  let temp: number = curPage.value;
-
-                  temp++;
-                  curPage.value = temp;
-                } else {
-                  curPage.value = totalPage.value;
-                }
-              } else {
-                curPage.value = parseInt(dom.innerHTML);
-              }
-            };
-            handle(e.target);
-            updatePaginationDisplay();
-            let newList = getListPagination();
-
-            for (let elem of newList) {
-              elem.removeEventListener("click", pageChangeCB);
-              elem.addEventListener("click", pageChangeCB);
-            }
-          };
-
-          for (let elem of list) {
-            elem.removeEventListener("click", pageChangeCB);
-            elem.addEventListener("click", pageChangeCB);
-          }
-        });
-      });
     }
   );
+};
+
+onMounted(async () => {
+  await getAdmins();
+
+  nextTick().then(() => {
+    //add 2 3-dot icons
+    const li1 = document.createElement("li");
+    li1.classList.add(
+      "vtl-paging-pagination-page-li",
+      "vtl-paging-pagination-page-li-number",
+      "three-dot",
+      "three-dot-left"
+    );
+    li1.innerHTML = /*html*/ `<img src="img/icons/3dot-black.svg" alt="•••">`;
+
+    const li2 = document.createElement("li");
+    li2.classList.add(
+      "vtl-paging-pagination-page-li",
+      "vtl-paging-pagination-page-li-number",
+      "three-dot",
+      "three-dot-right"
+    );
+    li2.innerHTML = /*html*/ `<img src="img/icons/3dot-black.svg" alt="•••">`;
+    tableExistingContainer.value
+      .querySelector(".vtl-paging-pagination-ul")
+      .appendChild(li1);
+    tableExistingContainer.value
+      .querySelector(".vtl-paging-pagination-ul")
+      .appendChild(li2);
+
+    // set html content for prev and next btn
+    getListPagination()[index.PREV].querySelector(
+      ".vtl-paging-pagination-page-link"
+    ).innerHTML = /*html*/ `<img src="img/icons/prev.svg" alt="•••">`;
+    getListPagination()[index.NEXT].querySelector(
+      ".vtl-paging-pagination-page-link"
+    ).innerHTML = /*html*/ `<img src="img/icons/next.svg" alt="•••">`;
+
+    // set html content for first and last btn
+    getListPagination()[index.FIRST].querySelector(
+      ".vtl-paging-pagination-page-link"
+    ).innerHTML = /*html*/ `1`;
+    getListPagination()[index.LAST].querySelector(
+      ".vtl-paging-pagination-page-link"
+    ).innerHTML = /*html*/ `${Math.floor(
+      table.rows.length / table.pageSize + 1
+    )}`;
+
+    updatePaginationDisplay();
+
+    nextTick().then(() => {
+      let list = getListPagination();
+
+      // add event to all btn to update curr page state
+      // console.log("len = " + list.length);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const pageChangeCB = (e: any) => {
+        console.log("BTN click: " + e.target);
+        if (e.target !== this) {
+          console.log(this);
+          return;
+        }
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const handle = (dom: any) => {
+          if (dom.classList.contains("vtl-paging-pagination-page-link-prev")) {
+            // console.log("prev");
+
+            if (curPage.value !== 1) {
+              let temp: number = curPage.value;
+              temp--;
+              curPage.value = temp;
+            } else {
+              curPage.value = 1;
+            }
+          } else if (
+            dom.classList.contains("vtl-paging-pagination-page-link-next")
+          ) {
+            // console.log("next");
+
+            if (curPage.value !== totalPage.value) {
+              let temp: number = curPage.value;
+
+              temp++;
+              curPage.value = temp;
+            } else {
+              curPage.value = totalPage.value;
+            }
+          } else {
+            curPage.value = parseInt(dom.innerHTML);
+          }
+        };
+        handle(e.target);
+        updatePaginationDisplay();
+        let newList = getListPagination();
+
+        for (let elem of newList) {
+          elem.removeEventListener("click", pageChangeCB);
+          elem.addEventListener("click", pageChangeCB);
+        }
+      };
+
+      for (let elem of list) {
+        elem.removeEventListener("click", pageChangeCB);
+        elem.addEventListener("click", pageChangeCB);
+      }
+    });
+  });
 });
 
 /**
@@ -480,7 +498,7 @@ const tableLoadingFinish = (elements: any) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       element.addEventListener("click-with-data", (event: any) => {
         console.log("btn-edit-admin click!!");
-        menuModal.selectedAdmin = event.detail;
+        menuModal.adminSelected = event.detail;
         console.log(event.detail);
 
         menuModal.isShowing = true;
@@ -578,11 +596,14 @@ const menuModalExistingContent = reactive({
   ] as MenuContent[],
 });
 
-/**
- * Close edit admin modal
- */
-const closeMenuModal = () => {
-  menuModal.isShowing = false;
+const adminUpdate = (e: any) => {
+  console.log(e);
+  editModal.close();
+  menuModal.open();
+
+  menuModal.adminSelected = e.data;
+  editModal.adminSelected = e.data;
+  getAdmins();
 };
 </script>
 

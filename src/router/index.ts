@@ -1,18 +1,20 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
 //page importing
-
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    name: "index",
+    redirect: "/admins",
+  },
+  {
+    path: "/admins",
+    name: "admins",
     component: () => import("@/views/pages/AdminPage/AdminPage.vue"),
     children: [
       {
-        path: "admins",
-        name: "admins",
-        component: () =>
-          import("@/views/components/AdminPage/AdminTableContainer.vue"),
+        path: "",
+        name: "adminTable",
+        component: () => import("@/components/AdminPage/AdminPageIndex.vue"),
       },
     ],
   },
@@ -23,9 +25,7 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
 });
-
-export default router;

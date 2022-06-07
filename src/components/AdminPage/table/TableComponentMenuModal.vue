@@ -19,22 +19,17 @@
 </template>
 <script lang="ts" setup>
 import { reactive, defineProps, defineEmits } from "vue";
-import MenuModalEventDetail from "@/models/AdminPage/MenuModalEventDetail";
-import Admin from "@/models/AdminPage/Admin";
-
-interface MenuContent {
-  id: number;
-  text: string;
-  desc: string;
-  isDanger: boolean;
-}
+import MenuModalEventDetail from "@/types/AdminPage/MenuModalEventDetail";
+import { editType } from "@/components/AdminPage/table/types/EditType";
+import MenuModalContent from "@/types/AdminPage/MenuModalContent";
+import Admin from "@/types/AdminPage/Admin";
 
 interface PropI {
   admin: Admin | null;
   isShowing: boolean;
   right: number;
   top: number;
-  menuContent: MenuContent[];
+  menuContent: MenuModalContent[];
 }
 
 const props = defineProps<PropI>();
@@ -42,14 +37,14 @@ const emit = defineEmits<{
   (e: "onSelect", detail: MenuModalEventDetail): void;
 }>();
 
-const modalItems: MenuContent[] = reactive(props.menuContent);
+const modalItems: MenuModalContent[] = reactive(props.menuContent);
 
-const emitEventMenuOnSelect = (item: MenuContent) => {
-  console.log("emit on select");
+const emitEventMenuOnSelect = (item: MenuModalContent) => {
+  console.log("emit on select", item);
 
   emit("onSelect", {
     admin: props.admin as Admin,
-    action: item.desc,
+    type: item.type,
   });
 };
 </script>

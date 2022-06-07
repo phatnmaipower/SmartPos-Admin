@@ -1,10 +1,15 @@
 <template>
-  <router-view></router-view>
+  <router-view />
 </template>
+
+<script lang="ts" setup>
+import { RouterView } from "vue-router";
+</script>
 
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap");
 @import "@/scss/layoutDefault.scss";
+
 *,
 *:before,
 *:after {
@@ -19,5 +24,3 @@ body {
   // min-height: $min-screen-height;
 }
 </style>
-
-<script lang="ts" setup></script>

@@ -15,7 +15,7 @@
 </template>
 <script lang="ts" setup>
 import { defineProps, ref, defineEmits } from "vue";
-import Admin from "@/models/AdminPage/Admin";
+import Admin from "@/types/AdminPage/Admin";
 interface PropI {
   title?: string;
   admin?: Admin;
@@ -50,11 +50,12 @@ const emitEventCloseBaseModal = () => {
     background-color: #fff;
     height: $admin-modal-edit-height;
     width: $admin-modal-edit-width;
+    height: max-content;
 
     $header-height: 50px;
     z-index: $zi-modal-edit-content;
     position: relative;
-    $x: 15px;
+    $x: 30px;
     $y: 15px;
     > .modal-header {
       height: $admin-modal-edit-header-height;
@@ -70,11 +71,13 @@ const emitEventCloseBaseModal = () => {
         position: absolute;
         right: $x;
         top: $y;
+        cursor: pointer;
       }
     }
 
     > .modal-content {
       height: $admin-modal-edit-height - $admin-modal-edit-header-height;
+      height: max-content;
     }
   }
 }

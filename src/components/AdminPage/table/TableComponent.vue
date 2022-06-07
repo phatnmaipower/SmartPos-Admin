@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 <template>
   <div ref="tableExistingContainer">
     <search-bar v-if="props.tableType === 'inviting'"></search-bar>
@@ -52,15 +51,17 @@
   </div>
 
   <base-modal
-    v-if="editModal.isShowing"
-    :title="editModal?.data[editModal?.type]?.title ?? 'no title'"
-    :admin="(editModal.adminSelected as Admin)"
+    v-if="editModal.isShowing && editModal.type !== editType.default"
+    :title="editModal.title"
+    :admin="editModal.adminSelected"
     @close-base-modal="editModal.close"
   >
-    <edit-name-vue
-      :admin="editModal.adminSelected as Admin"
+    <component
+      :is="editModal.data[editModal.type].component"
+      :admin="editModal.adminSelected"
       @update="adminUpdate"
-    ></edit-name-vue>
+    >
+    </component>
   </base-modal>
 </template>
 
@@ -76,14 +77,19 @@ import {
   shallowRef,
 } from "vue";
 import VueTableLite from "vue3-table-lite/ts";
-import TableComponentMenuModal from "./TableComponentMenuModal.vue";
-import SearchBar from "./TableComponentSearchBar.vue";
-import BaseModal from "./modals/BaseModal.vue";
-import EditNameVue from "./modals/modal-content/EditName.vue";
-import Admin from "@/models/AdminPage/Admin";
-
+import TableComponentMenuModal from "@/components/AdminPage/table/TableComponentMenuModal.vue";
+import SearchBar from "@/components/AdminPage/table/TableComponentSearchBar.vue";
+import BaseModal from "@/components/AdminPage/table/modals/BaseModal.vue";
+import EditName from "@/components/AdminPage/table/modals/modalContent/EditName.vue";
+import EditRole from "@/components/AdminPage/table/modals/modalContent/EditRole.vue";
+import EditPassword from "@/components/AdminPage/table/modals/modalContent/EditPassword.vue";
+import Admin from "@/types/AdminPage/Admin";
+import { ApiInfo } from "@/types/api/api";
+import { editType } from "@/components/AdminPage/table/types/EditType";
+import MenuModalContent from "@/types/AdminPage/MenuModalContent";
+import MenuModalEventDetail from "@/types/AdminPage/MenuModalEventDetail";
 interface PropI {
-  api: string;
+  api: ApiInfo;
   tableType: string;
 }
 
@@ -107,10 +113,13 @@ const menuModal = reactive({
   top: 0,
   adminSelected: null as Admin | null,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSelect: (event: any) => {
+  onSelect: (event: MenuModalEventDetail) => {
+    console.log(event);
+
     editModal.open();
+    editModal.title = editModal.data[event.type].title;
     editModal.adminSelected = event.admin;
-    console.log(event.admin);
+    editModal.type = event.type;
     menuModal.isShowing = false;
   },
 
@@ -123,50 +132,41 @@ const menuModal = reactive({
   },
 });
 
-const editModalType = reactive({
-  default: "",
-  editName: "EditName",
-  editRole: "EditRole",
-  editPassword: "EditPassword",
-  reInvite: "ReInvite",
-  delete: "Delete",
-});
-
 const editModal = reactive({
   isShowing: false,
-  adminSelected: null as Admin | null,
-  type: editModalType.default,
+  title: "",
+  adminSelected: {} as Admin,
+  type: editType.default,
 
   data: {
-    [editModalType.editName]: {
+    [editType.editName]: {
       title: "お名前編集",
-      component: shallowRef(
-        () =>
-          import(
-            "@/views/components/AdminPage/modals/modal-content/EditName.vue"
-          )
-      ),
+      component: shallowRef(EditName),
     },
-    [editModalType.editRole]: {
+    [editType.editRole]: {
       title: "edit role",
+      component: shallowRef(EditRole),
     },
-    [editModalType.editPassword]: {
+    [editType.editPassword]: {
       title: "edit password",
+      component: shallowRef(EditPassword),
     },
-    [editModalType.reInvite]: {
+    [editType.reInvite]: {
       title: "reinvite",
+      component: shallowRef(EditPassword),
     },
-    [editModalType.delete]: {
+    [editType.delete]: {
       title: "delete",
+      component: shallowRef(EditPassword),
     },
   },
   open: () => {
     editModal.isShowing = true;
-    editModal.type = editModalType.editName;
+    editModal.type = editType.editName;
   },
   close: () => {
     editModal.isShowing = false;
-    editModal.type = editModalType.editName;
+    editModal.type = editType.editName;
   },
 });
 
@@ -253,8 +253,8 @@ const table = reactive({
   pageSize: PAGE_SIZE,
   messages: {
     pagingInfo: "{2}件 ({0}-{1}位)",
-    pageSizeChangeLabel: "行数 ",
-    gotoPageLabel: "ページに移動 ",
+    pageSizeChangeLabel: "行数  ",
+    gotoPageLabel: "ページに移動  ",
     noDataAvailable: "No data",
   },
   pageOptions: [
@@ -281,7 +281,7 @@ const table = reactive({
 const axios: any = inject("axios"); // inject axios
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let admins: any = ref([]);
+let admins: any = ref<Admin[]>([]);
 
 const index = {
   PREV: 1,
@@ -298,9 +298,9 @@ const index = {
 };
 
 const updatePaginationDisplay = () => {
-  console.log(
-    `totalPage.value: ${totalPage.value} --- curPage.value: ${curPage.value} `
-  );
+  //console.log(
+  //  `totalPage.value: ${totalPage.value} --- curPage.value: ${curPage.value} `
+  //);
 
   const MAX_SHOW_AT_TIME = 7;
   const PAGE_MOVE_DEFAULT = 4;
@@ -359,23 +359,18 @@ const updatePaginationDisplay = () => {
 };
 
 const getAdmins = async () => {
-  console.log("getAdmins");
-  return Promise.resolve(axios.get(props.api)).then(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (response: { data: any }) => {
-      admins.value = [];
-      admins.value.push(...response.data);
-      admins.value.sort();
+  const response = await axios[props.api.method](props.api.endpoint);
 
-      table.totalRecordCount = admins.value.length;
-      table.sortable.order = "ID";
-      table.sortable.sort = "asc";
+  admins.value = [];
+  admins.value.push(...response.data);
+  admins.value.sort();
 
-      table.rows = admins.value;
-      totalPage.value = Math.floor(table.rows.length / table.pageSize + 1);
-      //customize pagination below
-    }
-  );
+  table.totalRecordCount = admins.value.length;
+  table.sortable.order = "ID";
+  table.sortable.sort = "asc";
+
+  table.rows = admins.value;
+  totalPage.value = Math.floor(table.rows.length / table.pageSize + 1);
 };
 
 onMounted(async () => {
@@ -437,7 +432,6 @@ onMounted(async () => {
       const pageChangeCB = (e: any) => {
         console.log("BTN click: " + e.target);
         if (e.target !== this) {
-          console.log(this);
           return;
         }
 
@@ -510,100 +504,97 @@ const tableLoadingFinish = (elements: any) => {
   table.isLoading = false;
 };
 
-interface MenuContent {
-  id: number;
-  text: string;
-  desc: string;
-  isDanger: boolean;
-}
-
-const menuModalExistingContent = reactive({
+const menuModalExistingContent = reactive<{
+  existing: MenuModalContent[];
+  inviting: MenuModalContent[];
+}>({
   existing: [
     {
       id: 0,
       text: "画像を編集する",
-      desc: "edit-avt",
+      type: editType.editAvatar,
       isDanger: false,
     },
     {
       id: 1,
       text: "姓名を編集する",
-      desc: "edit-name",
+      type: editType.editName,
       isDanger: false,
     },
     {
       id: 2,
       text: "メールアドレスを編集する",
-      desc: "edit-email",
+      type: editType.editEmail,
       isDanger: false,
     },
     {
       id: 3,
       text: "役割を編集する",
-      desc: "edit-role",
+      type: editType.editRole,
       isDanger: false,
     },
     {
       id: 4,
       text: "パスワードを編集する",
-      desc: "edit-password",
+      type: editType.editPassword,
       isDanger: false,
     },
     {
       id: 5,
       text: "取り除く",
-      desc: "delete",
+      type: editType.delete,
       isDanger: true,
     },
-  ] as MenuContent[],
+  ],
   inviting: [
     {
       id: 0,
       text: "画像を編集する",
-      desc: "edit-avt",
+      type: editType.editAvatar,
       isDanger: false,
     },
     {
       id: 1,
       text: "姓名を編集する",
-      desc: "edit-name",
+      type: editType.editName,
       isDanger: false,
     },
     {
       id: 2,
       text: "メールアドレスを編集する",
-      desc: "edit-email",
+      type: editType.editName,
       isDanger: false,
     },
     {
       id: 3,
       text: "役割を編集する",
-      desc: "edit-role",
+      type: editType.editRole,
       isDanger: false,
     },
     {
       id: 4,
       text: "再招待",
-      desc: "re-enter",
+      type: editType.reInvite,
       isDanger: false,
     },
     {
       id: 5,
       text: "取り除く",
-      desc: "delete",
+      type: editType.delete,
       isDanger: true,
     },
-  ] as MenuContent[],
+  ],
 });
 
-const adminUpdate = (e: any) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const adminUpdate = async (e: any) => {
   console.log(e);
   editModal.close();
   menuModal.open();
 
   menuModal.adminSelected = e.data;
   editModal.adminSelected = e.data;
-  getAdmins();
+  await getAdmins();
 };
 </script>
 

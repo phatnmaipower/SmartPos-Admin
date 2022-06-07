@@ -1,0 +1,115 @@
+{   
+    "host": "http://localhost:3000",
+    "admins": {
+        "getListAdmins": {
+            "method": "get",
+            "endpoint": "/admins"
+        },
+        "getListAdminsExisting": {
+            "method": "get",
+            "endpoint": "/admins/existing"
+        },
+        "getListAdminsInviting": {
+            "method": "get",
+            "endpoint": "/admins/inviting"
+        },
+        "agreeTermsAndConditions": {
+            "method": "post",
+            "endpoint": "/admins/agree"
+        },
+        "updateCurrentAdminAvatar": {
+            "method": "put",
+            "endpoint": "/admins/avatar"
+        },
+        "changeTemporaryPassword": {
+            "method": "post",
+            "endpoint": "/admins/change-temporary-password"
+        },
+        "newAdminConfirmInvitation": {
+            "method": "get",
+            "endpoint": "/admins/confirm-invitation"
+        },
+        "connectToXID": {
+            "method": "get",
+            "endpoint": "/admins/connect-xid"
+        },
+        "updateCurrentEmail": {
+            "method": "put",
+            "endpoint": "/admins/email"
+        },
+        "updateCurrentAdminFullName": {
+            "method": "put",
+            "endpoint": "/admins/full-name"
+        },
+        "inviteAdmin": {
+            "method": "post",
+            "endpoint": "/admins/invite"
+        },
+        "loginAdmin": {
+            "method": "post",
+            "endpoint": "/admins/login"
+        },
+        "loginAdminByXID": {
+            "method": "get",
+            "endpoint": "/admins/login-by-xid"
+        },
+        "getCurrentAdminProfile": {
+            "method": "get",
+            "endpoint": "/admins/my-profile"
+        },
+        "updateCurrentAdminPassword": {
+            "method": "put",
+            "endpoint": "/admins/password"
+        },
+        "getAdminInformation": {
+            "method": "get",
+            "endpoint": "/admins/{id}",
+            "params": [
+                "id"
+            ]
+        },
+        "deleteAdmin": {
+            "method": "delete",
+            "endpoint": "/admins/{id}",
+            "params": [
+                "id"
+            ]
+        },
+        "updateAdminAvatar": {
+            "method": "put",
+            "endpoint": "/admins/{id}/avatar",
+            "params": [
+                "id"
+            ]
+        },
+        "updateAdminEmail": {
+            "method": "put",
+            "endpoint": "/admins/{id}/email",
+            "params": [
+                "id"
+            ]
+        },
+        "updateAdminFullName": {
+            "method": "put",
+            "endpoint": "/admins/{id}/name",
+            "params": [
+                "id"
+            ]
+  
+        },
+        "resetAdminPassword": {
+            "method": "put",
+            "endpoint": "/admins/{id}/reset-password",
+            "params": [
+                "id"
+            ]
+        },
+        "updateAdminRole": {
+            "method": "put",
+            "endpoint": "/admins/{id}/role",
+            "params": [
+                "id"
+            ]
+        }
+    }
+}

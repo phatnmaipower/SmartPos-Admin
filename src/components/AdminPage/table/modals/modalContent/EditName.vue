@@ -5,6 +5,7 @@
       method="post"
       enctype="multipart/form-data"
       @submit.prevent="updateName"
+      ref="formElem"
     >
       <label>お名前</label><br />
 
@@ -31,14 +32,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import Admin from "@/models/AdminPage/Admin";
+import Admin from "@/types/AdminPage/Admin";
 import { AxiosStatic } from "axios";
-import { reactive, defineProps, inject, defineEmits } from "vue";
-import UpdateEventDetail from "../type/UpdateEventDetail";
+import { reactive, defineProps, inject, defineEmits, ref } from "vue";
+import UpdateEventDetail from "@/components/AdminPage/table/modals/types/UpdateEventDetail";
 import * as yup from "yup";
 import { setLocale } from "yup";
 import * as ja from "yup-locale-ja";
 import { useField, useForm } from "vee-validate";
+import { getRuntimeConfig } from "@/services/services";
 
 setLocale(ja.suggestive);
 interface PropI {
@@ -51,8 +53,10 @@ const emit = defineEmits<{
   (e: "update", detail: UpdateEventDetail): void;
 }>();
 
+const formElem = ref<HTMLFormElement | null>(null);
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const axios: AxiosStatic | undefined = inject<AxiosStatic>("axios"); // inject axios
+const axios: any = inject<AxiosStatic>("axios"); // inject axios
 
 const form = reactive({
   isFirstNameValid: true,
@@ -99,10 +103,16 @@ lastName.value = props?.admin?.name.split(" ")[1] ?? "";
 const updateName = async () => {
   const formData = new FormData();
   formData.append("id", props.admin.id);
-  formData.append("name", `${firstName.value} ${lastName.value}`);
+  formData.append("firstName", `${firstName.value}`);
+  formData.append("lastName", `${lastName.value}`);
 
-  let response = await axios?.post(
-    "http://localhost:3000/admins/updateOne/name",
+  const runtimeConfig = await getRuntimeConfig();
+  const api = runtimeConfig.admins.updateAdminFullName;
+  console.log("API", api);
+
+  let response = await axios[api.method](
+    runtimeConfig.host +
+      api.endpoint.replace(`{${api.params[0]}}`, `${props.admin.id}`),
     formData,
     {
       headers: { "Content-Type": "multipart/form-data" },

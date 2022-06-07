@@ -5,17 +5,21 @@
     <div id="tabs-container">
       <!-- tab navi -->
       <div id="tab-navi">
-        <button
-          v-for="tab of tabs"
-          :key="tab.id"
-          :class="{ active: tab.isActive }"
-          @click="onTabClick(tab.id)"
-        >
-          {{ tab.tabTitle }}
-        </button>
+        <template v-for="tab of tabs" :key="tab.id">
+          <button
+            :class="{ active: tab.isActive }"
+            to="#"
+            @click="onTabClick(tab.id)"
+          >
+            {{ tab.tabTitle }}
+          </button>
+        </template>
       </div>
       <template v-for="tab of tabs" :key="tab.id">
-        <div v-if="tab.isActive" :class="{ active: tab.isActive }">
+        <div
+          v-if="tab.isActive && isTabsSetupFinished"
+          :class="{ active: tab.isActive }"
+        >
           <table-component :table-type="tab.tableType" :api="tab.api">
           </table-component>
         </div>
@@ -25,8 +29,15 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive } from "vue";
-import TableComponent from "@/views/components/AdminPage/TableComponent.vue";
+import { reactive, inject, onMounted, ref } from "vue";
+import TableComponent from "@/components/AdminPage/table/TableComponent.vue";
+import { ApiI, ApiInfo } from "@/types/api/api";
+
+import { getRuntimeConfig } from "@/services/services";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const axios: any = inject("axios"); // inject axios
+
+const isTabsSetupFinished = ref(false);
 
 const tabs = reactive([
   {
@@ -34,14 +45,22 @@ const tabs = reactive([
     isActive: true,
     tabTitle: "既存管理者",
     tableType: "existing",
-    api: "http://localhost:3000/admins/existing",
+    api: {
+      method: "",
+      endpoint: "",
+      params: [],
+    } as ApiInfo,
   },
   {
     id: 2,
     isActive: false,
     tabTitle: "招待中管理者",
     tableType: "inviting",
-    api: "http://localhost:3000/admins/inviting",
+    api: {
+      method: "",
+      endpoint: "",
+      params: [],
+    } as ApiInfo,
   },
 ]);
 
@@ -54,6 +73,20 @@ const onTabClick = (id: number): void => {
     }
   }
 };
+
+onMounted(async () => {
+  const runtimeConfig: ApiI = await getRuntimeConfig();
+  console.log(runtimeConfig);
+
+  tabs[0].api = runtimeConfig.admins.getListAdminsExisting;
+  tabs[1].api = runtimeConfig.admins.getListAdminsInviting;
+
+  //append host
+  tabs[0].api.endpoint = runtimeConfig.host + tabs[0].api.endpoint;
+  tabs[1].api.endpoint = runtimeConfig.host + tabs[1].api.endpoint;
+
+  isTabsSetupFinished.value = true;
+});
 </script>
 
 <style lang="scss">

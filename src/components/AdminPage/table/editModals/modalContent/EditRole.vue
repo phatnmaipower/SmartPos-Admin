@@ -15,9 +15,8 @@
 
 <script lang="ts" setup>
 import Admin from "@/types/AdminPage/Admin";
-import { reactive, defineProps, inject, defineEmits, ref } from "vue";
-import UpdateEventDetail from "@/components/AdminPage/table/modals/types/UpdateEventDetail";
-
+import { defineProps, inject, defineEmits, ref } from "vue";
+import UpdateEventDetail from "@/types/AdminPage/UpdateEventDetail";
 import { getRuntimeConfig } from "@/services/services";
 
 interface PropI {

@@ -14,7 +14,12 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "",
         name: "adminTable",
-        component: () => import("@/components/AdminPage/AdminPageIndex.vue"),
+        component: () => import("@/components/AdminPage/AdminList.vue"),
+      },
+      {
+        path: "my-profile",
+        name: "myProfile",
+        component: () => import("@/components/AdminPage/MyProfile.vue"),
       },
     ],
   },

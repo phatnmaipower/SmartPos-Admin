@@ -30,7 +30,7 @@
         @on-select="menuModal.onSelect"
       ></table-component-menu-modal>
 
-      <table-component-menu-modal
+      <menu-popup
         v-else-if="menuModal.isShowing && props.tableType === 'inviting'"
         :admin="menuModal.adminSelected"
         :is-showing="menuModal.isShowing"
@@ -39,7 +39,7 @@
         @close-modal="menuModal.open"
         :menu-content="menuModalExistingContent[props.tableType]"
         :on-select="menuModal.onSelect"
-      ></table-component-menu-modal>
+      ></menu-popup>
 
       <div
         v-if="menuModal.isShowing"
@@ -77,15 +77,15 @@ import {
   shallowRef,
 } from "vue";
 import VueTableLite from "vue3-table-lite/ts";
-import TableComponentMenuModal from "@/components/AdminPage/table/TableComponentMenuModal.vue";
-import SearchBar from "@/components/AdminPage/table/TableComponentSearchBar.vue";
-import BaseModal from "@/components/AdminPage/table/modals/BaseModal.vue";
-import EditName from "@/components/AdminPage/table/modals/modalContent/EditName.vue";
-import EditRole from "@/components/AdminPage/table/modals/modalContent/EditRole.vue";
-import EditPassword from "@/components/AdminPage/table/modals/modalContent/EditPassword.vue";
+import MenuPopup from "@/components/AdminPage/table/menuPopup/MenuPopup.vue";
+import SearchBar from "@/components/AdminPage/table/SearchBar.vue";
+import BaseModal from "@/components/AdminPage/table/editModals/BaseModal.vue";
+import EditName from "@/components/AdminPage/table/editModals/modalContent/EditName.vue";
+import EditRole from "@/components/AdminPage/table/editModals/modalContent/EditRole.vue";
+import EditPassword from "@/components/AdminPage/table/editModals/modalContent/EditPassword.vue";
 import Admin from "@/types/AdminPage/Admin";
 import { ApiInfo } from "@/types/api/api";
-import { editType } from "@/components/AdminPage/table/types/EditType";
+import { editType } from "@/types/AdminPage/EditType";
 import MenuModalContent from "@/types/AdminPage/MenuModalContent";
 import MenuModalEventDetail from "@/types/AdminPage/MenuModalEventDetail";
 interface PropI {

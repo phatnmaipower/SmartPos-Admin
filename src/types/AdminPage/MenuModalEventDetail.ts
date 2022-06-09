@@ -1,5 +1,5 @@
 import Admin from "@/types/AdminPage/Admin";
-import { editType } from "@/components/AdminPage/table/types/EditType";
+import { editType } from "@/types/AdminPage/EditType";
 
 export const actions = {
   editName: "editName",

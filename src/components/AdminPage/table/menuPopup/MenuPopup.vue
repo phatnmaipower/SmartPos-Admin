@@ -20,7 +20,6 @@
 <script lang="ts" setup>
 import { reactive, defineProps, defineEmits } from "vue";
 import MenuModalEventDetail from "@/types/AdminPage/MenuModalEventDetail";
-import { editType } from "@/components/AdminPage/table/types/EditType";
 import MenuModalContent from "@/types/AdminPage/MenuModalContent";
 import Admin from "@/types/AdminPage/Admin";
 

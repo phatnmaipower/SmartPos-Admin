@@ -1,13 +1,17 @@
 <template>
   <header class="header">
-    <a class="logo" href="#">
+    <router-link class="logo" to="/">
       <img src="@/assets/logo.svg" alt="LOGO" />
-    </a>
-    <a class="profile" href="#">
+    </router-link>
+    <router-link class="profile" to="/admins/my-profile">
       <img src="@/assets/profile.svg" alt="PROFILE" />
-    </a>
+    </router-link>
   </header>
 </template>
+
+<script lang="ts" setup>
+import { RouterLink } from "vue-router";
+</script>
 
 <style lang="scss">
 @import "@/scss/layoutDefault.scss";
@@ -33,5 +37,3 @@
   padding-right: 20px;
 }
 </style>
-
-<script lang="ts" setup></script>

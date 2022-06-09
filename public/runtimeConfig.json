@@ -1,115 +1,114 @@
-{   
-    "host": "http://localhost:3000",
+{
     "admins": {
-        "getListAdmins": {
-            "method": "get",
-            "endpoint": "/admins"
-        },
-        "getListAdminsExisting": {
-            "method": "get",
-            "endpoint": "/admins/existing"
-        },
-        "getListAdminsInviting": {
-            "method": "get",
-            "endpoint": "/admins/inviting"
-        },
         "agreeTermsAndConditions": {
-            "method": "post",
-            "endpoint": "/admins/agree"
-        },
-        "updateCurrentAdminAvatar": {
-            "method": "put",
-            "endpoint": "/admins/avatar"
+            "endpoint": "/admins/agree",
+            "method": "post"
         },
         "changeTemporaryPassword": {
-            "method": "post",
-            "endpoint": "/admins/change-temporary-password"
-        },
-        "newAdminConfirmInvitation": {
-            "method": "get",
-            "endpoint": "/admins/confirm-invitation"
+            "endpoint": "/admins/change-temporary-password",
+            "method": "post"
         },
         "connectToXID": {
-            "method": "get",
-            "endpoint": "/admins/connect-xid"
+            "endpoint": "/admins/connect-xid",
+            "method": "get"
         },
-        "updateCurrentEmail": {
-            "method": "put",
-            "endpoint": "/admins/email"
-        },
-        "updateCurrentAdminFullName": {
-            "method": "put",
-            "endpoint": "/admins/full-name"
-        },
-        "inviteAdmin": {
-            "method": "post",
-            "endpoint": "/admins/invite"
-        },
-        "loginAdmin": {
-            "method": "post",
-            "endpoint": "/admins/login"
-        },
-        "loginAdminByXID": {
-            "method": "get",
-            "endpoint": "/admins/login-by-xid"
-        },
-        "getCurrentAdminProfile": {
-            "method": "get",
-            "endpoint": "/admins/my-profile"
-        },
-        "updateCurrentAdminPassword": {
-            "method": "put",
-            "endpoint": "/admins/password"
-        },
-        "getAdminInformation": {
-            "method": "get",
+        "deleteAdmin": {
             "endpoint": "/admins/{id}",
+            "method": "delete",
             "params": [
                 "id"
             ]
         },
-        "deleteAdmin": {
-            "method": "delete",
+        "getAdminInformation": {
             "endpoint": "/admins/{id}",
+            "method": "get",
+            "params": [
+                "id"
+            ]
+        },
+        "getCurrentAdminProfile": {
+            "endpoint": "/admins/my-profile",
+            "method": "get"
+        },
+        "getListAdmins": {
+            "endpoint": "/admins",
+            "method": "get"
+        },
+        "getListAdminsExisting": {
+            "endpoint": "/admins/existing",
+            "method": "get"
+        },
+        "getListAdminsInviting": {
+            "endpoint": "/admins/inviting",
+            "method": "get"
+        },
+        "inviteAdmin": {
+            "endpoint": "/admins/invite",
+            "method": "post"
+        },
+        "loginAdmin": {
+            "endpoint": "/admins/login",
+            "method": "post"
+        },
+        "loginAdminByXID": {
+            "endpoint": "/admins/login-by-xid",
+            "method": "get"
+        },
+        "newAdminConfirmInvitation": {
+            "endpoint": "/admins/confirm-invitation",
+            "method": "get"
+        },
+        "resetAdminPassword": {
+            "endpoint": "/admins/{id}/reset-password",
+            "method": "put",
             "params": [
                 "id"
             ]
         },
         "updateAdminAvatar": {
-            "method": "put",
             "endpoint": "/admins/{id}/avatar",
+            "method": "put",
             "params": [
                 "id"
             ]
         },
         "updateAdminEmail": {
-            "method": "put",
             "endpoint": "/admins/{id}/email",
+            "method": "put",
             "params": [
                 "id"
             ]
         },
         "updateAdminFullName": {
-            "method": "put",
             "endpoint": "/admins/{id}/name",
-            "params": [
-                "id"
-            ]
-  
-        },
-        "resetAdminPassword": {
             "method": "put",
-            "endpoint": "/admins/{id}/reset-password",
             "params": [
                 "id"
             ]
         },
         "updateAdminRole": {
-            "method": "put",
             "endpoint": "/admins/{id}/role",
+            "method": "put",
             "params": [
                 "id"
             ]
+        },
+        "updateCurrentAdminAvatar": {
+            "endpoint": "/admins/avatar",
+            "method": "put"
+        },
+        "updateCurrentAdminFullName": {
+            "endpoint": "/admins/full-name",
+            "method": "put"
+        },
+        "updateCurrentAdminPassword": {
+            "endpoint": "/admins/password",
+            "method": "put"
+        },
+        "updateCurrentEmail": {
+            "endpoint": "/admins/email",
+            "method": "put"
         }
-    }
+    },
+    "host": "http://localhost:3000"
 }

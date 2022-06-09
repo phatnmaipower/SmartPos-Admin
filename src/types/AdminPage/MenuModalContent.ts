@@ -1,4 +1,4 @@
-import { editType } from "@/components/AdminPage/table/types/EditType";
+import { editType } from "@/types/AdminPage/EditType";
 export default interface MenuModalContent {
   id: number;
   text: string;

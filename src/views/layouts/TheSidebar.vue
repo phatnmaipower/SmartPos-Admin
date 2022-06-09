@@ -40,7 +40,7 @@ const store = useStore(key);
 const route = useRoute();
 
 const path = ref(computed(() => route.path));
-const href: Array<string> = ["/", "/", "/admins", "/", "/"];
+const href: string[] = ["/", "/", "/admins", "/", "/"];
 const navItems = reactive([
   {
     id: 0,

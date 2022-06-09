@@ -35,7 +35,7 @@
 import Admin from "@/types/AdminPage/Admin";
 import { AxiosStatic } from "axios";
 import { reactive, defineProps, inject, defineEmits, ref } from "vue";
-import UpdateEventDetail from "@/components/AdminPage/table/modals/types/UpdateEventDetail";
+import UpdateEventDetail from "@/components/AdminPage/table/editModals/types/UpdateEventDetail";
 import * as yup from "yup";
 import { setLocale } from "yup";
 import * as ja from "yup-locale-ja";

@@ -29,13 +29,11 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, inject, onMounted, ref } from "vue";
+import { reactive, onMounted, ref } from "vue";
 import TableComponent from "@/components/AdminPage/table/TableComponent.vue";
 import { ApiI, ApiInfo } from "@/types/api/api";
 
 import { getRuntimeConfig } from "@/services/services";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const axios: any = inject("axios"); // inject axios
 
 const isTabsSetupFinished = ref(false);
 

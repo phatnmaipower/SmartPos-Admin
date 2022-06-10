@@ -19,7 +19,7 @@
       >
       </vue-table-lite>
 
-      <table-component-menu-modal
+      <menu-popup
         v-if="menuModal.isShowing && props.tableType === 'existing'"
         :admin="menuModal.adminSelected"
         :is-showing="menuModal.isShowing"
@@ -28,7 +28,7 @@
         @close-modal="menuModal.close"
         :menu-content="menuModalExistingContent[props.tableType]"
         @on-select="menuModal.onSelect"
-      ></table-component-menu-modal>
+      ></menu-popup>
 
       <menu-popup
         v-else-if="menuModal.isShowing && props.tableType === 'inviting'"
@@ -87,7 +87,7 @@ import Admin from "@/types/AdminPage/Admin";
 import { ApiInfo } from "@/types/api/api";
 import { editType } from "@/types/AdminPage/EditType";
 import MenuModalContent from "@/types/AdminPage/MenuModalContent";
-import MenuModalEventDetail from "@/types/AdminPage/MenuModalEventDetail";
+import MenuPopupEventDetail from "@/types/AdminPage/MenuPopupEventDetail";
 interface PropI {
   api: ApiInfo;
   tableType: string;
@@ -111,10 +111,10 @@ const menuModal = reactive({
   isShowing: false,
   right: 0,
   top: 0,
-  adminSelected: null as Admin | null,
+  adminSelected: {} as Admin,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSelect: (event: MenuModalEventDetail) => {
-    console.log(event);
+  onSelect: (event: MenuPopupEventDetail) => {
+    console.log("[ON SELECT EVENT]", event);
 
     editModal.open();
     editModal.title = editModal.data[event.type].title;

@@ -19,7 +19,7 @@
 </template>
 <script lang="ts" setup>
 import { reactive, defineProps, defineEmits } from "vue";
-import MenuModalEventDetail from "@/types/AdminPage/MenuModalEventDetail";
+import MenuPopupEventDetail from "@/types/AdminPage/MenuPopupEventDetail";
 import MenuModalContent from "@/types/AdminPage/MenuModalContent";
 import Admin from "@/types/AdminPage/Admin";
 
@@ -33,7 +33,7 @@ interface PropI {
 
 const props = defineProps<PropI>();
 const emit = defineEmits<{
-  (e: "onSelect", detail: MenuModalEventDetail): void;
+  (e: "onSelect", detail: MenuPopupEventDetail): void;
 }>();
 
 const modalItems: MenuModalContent[] = reactive(props.menuContent);

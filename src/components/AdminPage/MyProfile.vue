@@ -8,7 +8,8 @@
       <span>設定資料</span>
     </div>
     <div class="main-content-profile">
-      <div class="avatar">
+      <div class="avatar-div-title">アバター</div>
+      <div class="avatar-div">
         <img :src="admin.img" alt="" />
         <span>{{ admin.name }}</span>
       </div>
@@ -20,6 +21,7 @@
 import Admin from "@/types/AdminPage/Admin";
 import { useStore } from "vuex";
 import { key } from "@/store/index";
+import { RouterLink } from "vue-router";
 const store = useStore(key);
 
 const admin: Admin = store.state.admin;
@@ -51,6 +53,27 @@ const admin: Admin = store.state.admin;
     > .exit {
       text-decoration: none;
       color: #d8000c;
+    }
+  }
+
+  > .main-content-profile {
+    padding: 30px 0px;
+    > .avatar-div-title {
+      margin-bottom: 10px;
+    }
+    > .avatar-div {
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 30px;
+      display: flex;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      > img {
+        width: 50px;
+      }
     }
   }
 

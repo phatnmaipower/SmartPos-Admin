@@ -1,4 +1,5 @@
 <template>
+  <h1>EDIT EMAIL</h1>
   <div class="edit-name-content-div">
     <form
       action="http://localhost:3000/admins/updateOne/name"

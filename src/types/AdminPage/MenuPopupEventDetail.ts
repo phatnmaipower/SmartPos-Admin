@@ -5,7 +5,7 @@ export const actions = {
   editName: "editName",
 };
 
-export default interface MenuModalEventDetail {
+export default interface MenuPopupEventDetail {
   admin: Admin;
   type: typeof editType.default;
 }
